@@ -1,6 +1,13 @@
-# Atlas Histórico de Secas e Risco Hídrico do Estado do Rio de Janeiro (1981–2025)
+# Atlas Histórico de Secas e Risco Hídrico do Estado do Rio de Janeiro (1981–2026)
 
-Aplicação web estática e pipeline científico para monitoramento multiescalar de secas e cheias no Estado do Rio de Janeiro, integrando matrizes espaciais do **CHIRPS v3** e **ERA5-Land**, modelagem autorregressiva **ARIMA** e visualização em alta resolução.
+[![Acesse o Atlas Web](https://img.shields.io/badge/Acessar-Atlas%20Web%20(Online)-0284c7?style=for-the-badge&logo=googlechrome&logoColor=white)](https://nchnogueira.github.io/atlas-secas-rj/)
+[![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub%20Pages-22c55e?style=for-the-badge&logo=github)](https://nchnogueira.github.io/atlas-secas-rj/)
+
+> 🌐 **Aplicação Web no Ar:**  
+> O Atlas está publicado e acessível publicamente em: **[https://nchnogueira.github.io/atlas-secas-rj/](https://nchnogueira.github.io/atlas-secas-rj/)**  
+> *(Acesso direto aos recursos da interface: [https://nchnogueira.github.io/atlas-secas-rj/web/](https://nchnogueira.github.io/atlas-secas-rj/web/))*
+
+Aplicação web estática e pipeline científico para monitoramento multiescalar de secas e cheias no Estado do Rio de Janeiro, integrando matrizes espaciais do **CHIRPS v3** e **ERA5-Land**, modelagem autorregressiva **ARIMA** e visualização interativa em alta resolução.
 
 ---
 
@@ -8,24 +15,25 @@ Aplicação web estática e pipeline científico para monitoramento multiescalar
 
 ```text
 Atlas_Secas_RJ/
+├── index.html                     # Redirecionador raiz para a aplicação web no GitHub Pages
 ├── web/                           # Aplicação web estática completa
 │   ├── index.html                 # Interface principal e documentação metodológica
 │   ├── css/
-│   │   └── styles.css             # Folha de estilos e paleta RdBu
+│   │   └── styles.css             # Folha de estilos e paleta RdBu (NASA theme)
 │   ├── js/
 │   │   ├── app.js                 # Controlador da aplicação
 │   │   ├── map.js                 # Motor Leaflet + Canvas e camadas vetoriais
 │   │   └── chart.js               # Gráficos dinâmicos com Apache ECharts
 │   └── data/                      # Matrizes e camadas de alta resolução
 │       ├── grid_meta.json         # Metadados dos 1.746 pixels (~5,5 km)
-│       ├── dates.json             # 540 meses históricos + 3 de projeção
+│       ├── dates.json             # 540 meses históricos + 12 de projeção (1981–2026/27)
 │       ├── muni_bounds.geojson    # Contornos dos 92 municípios do RJ (IBGE)
 │       ├── state_bounds.geojson   # Limites do RJ, SP, MG e ES
 │       ├── spei_3.json            # Matriz multiescalar SPEI-3
 │       ├── spei_6.json            # Matriz multiescalar SPEI-6
 │       ├── spei_12.json           # Matriz multiescalar SPEI-12
 │       ├── spei_24.json           # Matriz multiescalar SPEI-24
-│       └── forecast.json          # Projeções ARIMA (h=3), IC 80% e 95%
+│       └── forecast.json          # Projeções ARIMA (h=12), IC 80% e 95%
 ├── scripts/                       # Pipelines reprodutíveis em R
 │   ├── generate_atlas_dataset.R   # Ingestão DuckDB, cálculo de SPEI e ARIMA
 │   └── export_high_res_shapes.R   # Extração dos vetores de alta resolução
