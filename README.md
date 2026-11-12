@@ -40,18 +40,18 @@ Atlas_Secas_RJ/
 Sempre que novas observações forem inseridas nos bancos DuckDB do CHIRPS v3 e ERA5-Land (adicionando novos meses ou retificando dados históricos):
 
 1. **Atualização em 1 clique (Windows):**
-   * Dê um duplo clique no arquivo [`atualizar_dados.bat`](file:///c:/Users/nchnogueira/Documents/GitHub/Portifolio/Atlas_Secas_RJ/atualizar_dados.bat) na raiz da pasta `Atlas_Secas_RJ/`.
+   * Dê um duplo clique no arquivo [`atualizar_dados.bat`](file:///c:/Users/nchnogueira/Documents/GitHub/atlas-secas-rj/atualizar_dados.bat) na raiz do repositório.
    * Ou no PowerShell:
      ```powershell
-     .\Atlas_Secas_RJ\atualizar_dados.ps1
+     .\atualizar_dados.bat
      ```
 
 2. **O que o script executa automaticamente:**
    * Executa o pipeline científico em R (`scripts/generate_atlas_dataset.R`).
    * Recalcula os índices multiescalares ($D = P - \text{PET}$, SPEI-3, SPEI-6, SPEI-12, SPEI-24).
    * Reajusta o modelo autorregressivo ARIMA para os pixels e municípios, projetando os próximos meses com intervalos de confiança de 80% e 95%.
-   * Gera as matrizes JSON otimizadas em `Atlas_Secas_RJ/web/data/`.
-   * Sincroniza automaticamente toda a aplicação para a pasta pública `docs/atlas-secas-rj/` (GitHub Pages).
+   * Gera as matrizes JSON otimizadas em `web/data/`.
+   * Sincroniza automaticamente toda a aplicação para a pasta de publicação `docs/atlas-secas-rj/` (GitHub Pages).
 
 ---
 
@@ -59,16 +59,19 @@ Sempre que novas observações forem inseridas nos bancos DuckDB do CHIRPS v3 e 
 
 Como a aplicação realiza requisições assíncronas locais para carregar os dados das matrizes e contornos vetoriais, utilize um servidor estático:
 
+### Via Script Automático:
+Dê um duplo clique no arquivo [`rodar_site.bat`](file:///c:/Users/nchnogueira/Documents/GitHub/atlas-secas-rj/rodar_site.bat). O servidor local será iniciado e a página aberta automaticamente no seu navegador.
+
 ### Via Python:
 Acesse a pasta do repositório no terminal e execute:
 ```powershell
-python -m http.server 8088 --directory Atlas_Secas_RJ/web
+python -m http.server 8088 --directory web
 ```
 Depois, abra no navegador:
 **[http://localhost:8088](http://localhost:8088)**
 
 ### Via VS Code:
-Abra o arquivo `Atlas_Secas_RJ/web/index.html` e selecione **"Open with Live Server"**.
+Abra o arquivo `web/index.html` e selecione **"Open with Live Server"**.
 
 ---
 
@@ -78,10 +81,29 @@ Os scripts utilizam os dados do mestrado armazenados em DuckDB e pacotes como `S
 
 Para rodar a extração dos vetores em alta resolução:
 ```powershell
-Rscript Atlas_Secas_RJ/scripts/export_high_res_shapes.R
+Rscript scripts/export_high_res_shapes.R
 ```
 
 Para recalcular o SPEI e as projeções ARIMA:
 ```powershell
-Rscript Atlas_Secas_RJ/scripts/generate_atlas_dataset.R
+Rscript scripts/generate_atlas_dataset.R
 ```
+
+---
+
+## Uso de Inteligência Artificial e Responsabilidade Técnica
+
+Este projeto contou com o apoio de ferramentas de **Inteligência Artificial (modelos de linguagem / LLMs)** como recurso auxiliar para aceleração do desenvolvimento de código (estruturação de scripts em linguagem R, engenharia da interface web estática e organização da documentação técnica).
+
+A concepção teórica, definição do problema, formulação metodológica, harmonização espacial dos dados de satélite e reanálise meteorológica (**CHIRPS v3** e **ERA5-Land**), parametrização matemática ($D = P - \text{PET}$, L-momentos e distribuições de probabilidades), modelagem preditiva estocástica ARIMA e interpretação das vulnerabilidades climáticas e hídricas fluminenses foram idealizadas, projetadas e conduzidas integralmente pelo autor.
+
+> **Declaração de Responsabilidade:** O autor (**Nícolas Chenquel Nogueira**) auditou, testou e validou todo o código-fonte, rotinas analíticas, matrizes de dados e interpretações científicas, **assumindo inteira e irrestrita responsabilidade** por todo o conteúdo, resultados e conclusões apresentados neste projeto.
+
+---
+
+## Autoria e Contato
+
+* **Autor:** [Nícolas Chenquel Nogueira](https://github.com/nchnogueira)
+* **Vínculo Institucional:** Mestrando em Ciências Naturais na Universidade Estadual do Norte Fluminense Darcy Ribeiro (UENF) &middot; Licenciado em Ciências Biológicas pela UFRJ
+* **Áreas de Atuação:** Climatologia Quantitativa, Modelagem de Risco Hídrico, Bioestatística, Geoprocessamento e Risco Climático Corporativo (ESG/TCFD)
+* **Licença:** MIT (consulte o arquivo [LICENSE](file:///c:/Users/nchnogueira/Documents/GitHub/atlas-secas-rj/LICENSE) para mais detalhes)
