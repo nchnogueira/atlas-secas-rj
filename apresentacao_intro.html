@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Apresentação - Atlas Histórico de Secas e Risco Hídrico do RJ</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background-color: #060a12;
+      background-image: 
+        radial-gradient(circle at 85% 15%, rgba(0, 229, 255, 0.14) 0%, transparent 45%),
+        radial-gradient(circle at 15% 85%, rgba(255, 145, 0, 0.09) 0%, transparent 40%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 60px 60px, 60px 60px;
+      color: #e2e8f0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 60px 90px;
+      position: relative;
+    }
+
+    /* Borda cibernética sutil de apresentação */
+    .viewport-frame {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      right: 25px;
+      bottom: 25px;
+      border: 1px solid rgba(0, 229, 255, 0.22);
+      pointer-events: none;
+      border-radius: 12px;
+    }
+
+    .corner-decor {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border: 3px solid #00e5ff;
+    }
+    .corner-tl { top: -2px; left: -2px; border-right: none; border-bottom: none; border-top-left-radius: 12px; }
+    .corner-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; border-top-right-radius: 12px; }
+    .corner-bl { bottom: -2px; left: -2px; border-right: none; border-top: none; border-bottom-left-radius: 12px; }
+    .corner-br { bottom: -2px; right: -2px; border-left: none; border-top: none; border-bottom-right-radius: 12px; }
+
+    /* Top Tags */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 2;
+    }
+
+    .tags-group {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 22px;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .badge-cyan {
+      background: rgba(0, 229, 255, 0.12);
+      color: #00e5ff;
+      border: 1px solid rgba(0, 229, 255, 0.4);
+      box-shadow: 0 0 16px rgba(0, 229, 255, 0.25);
+    }
+
+    .badge-amber {
+      background: rgba(255, 145, 0, 0.12);
+      color: #ff9100;
+      border: 1px solid rgba(255, 145, 0, 0.4);
+    }
+
+    .badge-purple {
+      background: rgba(168, 85, 247, 0.12);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.4);
+    }
+
+    .telemetry {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 500;
+      color: #94a3b8;
+      letter-spacing: 0.06em;
+    }
+
+    /* Hero / Title Section */
+    .hero-content {
+      z-index: 2;
+      max-width: 1480px;
+      margin-top: 15px;
+    }
+
+    .pre-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 600;
+      color: #00e5ff;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .pre-title::before {
+      content: "";
+      display: inline-block;
+      width: 36px;
+      height: 3px;
+      background: #00e5ff;
+      box-shadow: 0 0 10px #00e5ff;
+    }
+
+    h1 {
+      font-size: 72px;
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      color: #ffffff;
+      margin-bottom: 22px;
+      background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 50%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h1 .highlight-cyan {
+      background: linear-gradient(135deg, #00e5ff 0%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 25px;
+      font-weight: 400;
+      line-height: 1.48;
+      color: #94a3b8;
+      max-width: 1350px;
+      margin-bottom: 34px;
+    }
+
+    .subtitle strong {
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    /* Grid de Recursos Chave */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-top: 10px;
+      z-index: 2;
+    }
+
+    .feature-card {
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 24px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: #00e5ff;
+    }
+
+    .feature-card.amber::before {
+      background: #ff9100;
+    }
+
+    .feature-card.purple::before {
+      background: #c084fc;
+    }
+
+    .feature-card.emerald::before {
+      background: #10b981;
+    }
+
+    .feature-metric {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 38px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .feature-metric span {
+      font-size: 18px;
+      color: #00e5ff;
+      font-weight: 600;
+    }
+
+    .feature-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 15px;
+      line-height: 1.45;
+      color: #94a3b8;
+    }
+
+    /* Bottom Info */
+    .bottom-bar {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 24px;
+      z-index: 2;
+    }
+
+    .author-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .author-name {
+      font-size: 24px;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .author-role {
+      font-size: 16px;
+      color: #94a3b8;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .tech-stack {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .tech-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="viewport-frame">
+    <div class="corner-decor corner-tl"></div>
+    <div class="corner-decor corner-tr"></div>
+    <div class="corner-decor corner-bl"></div>
+    <div class="corner-decor corner-br"></div>
+  </div>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="tags-group">
+      <div class="badge badge-cyan">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Sensoriamento Remoto Orbital
+      </div>
+      <div class="badge badge-amber">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        Balanço Hídrico Climatológico
+      </div>
+      <div class="badge badge-purple">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Previsão Estocástica ARIMA
+      </div>
+    </div>
+    <div class="telemetry">
+      CHIRPS v3 &middot; ERA5-LAND &middot; 1981&ndash;2026 &middot; PROJEÇÃO 2026/2027
+    </div>
+  </div>
+
+  <!-- Hero Title -->
+  <div class="hero-content">
+    <div class="pre-title">Plataforma Interativa de Monitoramento Ambiental</div>
+    <h1>
+      Atlas Histórico de Secas e Risco Hídrico<br>
+      <span class="highlight-cyan">do Estado do Rio de Janeiro</span>
+    </h1>
+    <p class="subtitle">
+      Diagnóstico espaço-temporal multiescalar de <strong>46 anos de dados climáticos</strong> nos <strong>92 municípios fluminenses</strong> através do índice <strong>SPEI (3, 6, 12 e 24 meses)</strong>, integrado à modelagem preditiva estocástica para antecipação de vulnerabilidades hídricas.
+    </p>
+
+    <!-- 4 Features Grid -->
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-metric">92 <span>municípios</span></div>
+        <div class="feature-title">Cobertura Fluminense Integral</div>
+        <div class="feature-desc">Monitoramento completo de todas as bacias, com destaque para o Rio Paraíba do Sul e Sistema Guandu.</div>
+      </div>
+
+      <div class="feature-card amber">
+        <div class="feature-metric">1.746 <span>células</span></div>
+        <div class="feature-title">Alta Resolução (~5 km)</div>
+        <div class="feature-desc">Grade contínua de 0,05° integrando satélite CHIRPS v3 e evapotranspiração Penman-Monteith ERA5-Land.</div>
+      </div>
+
+      <div class="feature-card purple">
+        <div class="feature-metric">SPEI <span>3 / 6 / 12 / 24</span></div>
+        <div class="feature-title">Abordagem Multiescalar</div>
+        <div class="feature-desc">Diferenciação clara entre seca agrícola superficial, déficit sazonal, impacto em reservatórios e aquíferos.</div>
+      </div>
+
+      <div class="feature-card emerald">
+        <div class="feature-metric">12 <span>meses</span></div>
+        <div class="feature-title">Projeção Preditiva ARIMA</div>
+        <div class="feature-desc">Modelagem automatizada com intervalos de confiança probabilísticos (80% e 95%) para o ano corrente.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="bottom-bar">
+    <div class="author-info">
+      <div class="author-name">
+        Nícolas Chenquel Nogueira
+      </div>
+      <div class="author-role">
+        Pesquisa &amp; Desenvolvimento &middot; Análise Espacial &middot; Climatologia Quantitativa
+      </div>
+    </div>
+
+    <div class="tech-stack">
+      <div class="tech-pill">Leaflet.js</div>
+      <div class="tech-pill">Plotly.js</div>
+      <div class="tech-pill">R / SPEI</div>
+      <div class="tech-pill">Python / GDAL</div>
+      <div class="tech-pill">CHIRPS v3</div>
+      <div class="tech-pill">ERA5-Land</div>
+    </div>
+  </div>
+
+</body>
+</html>

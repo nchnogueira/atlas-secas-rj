@@ -1,0 +1,1312 @@
+/* ==============================================================================
+   ATLAS HISTÓRICO DE SECAS DO ESTADO DO RIO DE JANEIRO (1981–2025)
+   NASA Science Climate Interactives Design System
+   Rigor Científico Editorial, Imersão Espacial, Glassmorphism e Zero Emojis
+   ============================================================================== */
+
+:root {
+  /* Modern Web Guidance: Declaração de suporte a tema escuro */
+  color-scheme: dark;
+
+  /* Paleta Cósmica & Superfícies Espaciais */
+  --bg-primary: #07090e;
+  --bg-surface: #0c1017;
+  --bg-card: rgba(14, 20, 32, 0.85);
+  --bg-card-hover: rgba(22, 30, 48, 0.9);
+  --bg-glass: rgba(11, 15, 25, 0.75);
+  
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(255, 255, 255, 0.15);
+  --border-glow: rgba(0, 180, 216, 0.4);
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  /* Acentos de Ação NASA */
+  --nasa-red: #e31b23;
+  --nasa-red-hover: #f02830;
+  --nasa-blue: #105bd8;
+  --nasa-cyan: #00b4d8;
+  --nasa-cyan-glow: rgba(0, 180, 216, 0.4);
+  --accent-gold: #facc15;
+  --accent-gold-glow: rgba(250, 204, 21, 0.45);
+
+  /* Paleta Climatológica Oficial RdBu (ColorBrewer: Vermelho - Branco - Azul) */
+  --drought-exceptional: #67001f;
+  --drought-extreme: #b2182b;
+  --drought-severe: #d6604d;
+  --drought-moderate: #f4a582;
+  --drought-abnormal: #fddbc7;
+  --climate-normal: #f7f7f7;
+  --wet-mild: #d1e5f0;
+  --wet-moderate: #92c5de;
+  --wet-severe: #4393c3;
+  --wet-extreme: #2166ac;
+  --wet-exceptional: #053061;
+
+  /* Tipografia NASA: Geométrica, Precisa e Tabular */
+  --font-family: "Public Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+  /* Formas, Raios e Sombras Cósmicas */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 9999px;
+
+  --shadow-hud: 0 8px 32px 0 rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --shadow-glow-cyan: 0 0 16px rgba(0, 180, 216, 0.35);
+  --shadow-glow-red: 0 0 16px rgba(227, 27, 35, 0.4);
+
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Modern Web Guidance: accent-color para inputs e formulários */
+  accent-color: var(--nasa-cyan);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color-scheme: dark;
+  scrollbar-color: rgba(255, 255, 255, 0.2) var(--bg-surface);
+  scrollbar-width: thin;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-primary);
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(16, 91, 216, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 100% 100%, rgba(0, 180, 216, 0.04) 0%, transparent 50%);
+  color: var(--text-primary);
+  line-height: 1.55;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==============================================================================
+   INTRO CARD: GUIA DO USUÁRIO & FUNDAMENTAÇÃO DO SPEI (NASA EDITORIAL)
+   ============================================================================== */
+.intro-card {
+  background: linear-gradient(135deg, rgba(14, 20, 32, 0.95), rgba(8, 12, 20, 0.9));
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.intro-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--nasa-blue), var(--nasa-cyan), var(--accent-gold));
+}
+
+.intro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.intro-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.intro-title-group h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.intro-badge {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  background: rgba(0, 180, 216, 0.15);
+  color: var(--nasa-cyan);
+  border: 1px solid rgba(0, 180, 216, 0.35);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+}
+
+.intro-toggle-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: var(--transition);
+}
+
+.intro-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border-color: var(--border-light);
+}
+
+.intro-toggle-btn svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.25s ease;
+}
+
+.intro-content {
+  margin-top: 1rem;
+  transition: max-height 0.35s ease, opacity 0.3s ease;
+  overflow: hidden;
+}
+
+.intro-content.collapsed {
+  display: none;
+}
+
+.intro-overview-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: 1.25rem;
+}
+
+.intro-overview-text strong {
+  color: var(--text-primary);
+}
+
+.intro-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.intro-box {
+  background: rgba(10, 15, 24, 0.75);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.intro-box-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--nasa-cyan);
+}
+
+.intro-box-title svg {
+  width: 16px;
+  height: 16px;
+  stroke: var(--nasa-cyan);
+}
+
+.intro-box p, .intro-box ul {
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.intro-box ul {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.intro-box li strong {
+  color: var(--text-primary);
+}
+
+.intro-box li {
+  position: relative;
+  padding-left: 1.1rem;
+}
+
+.intro-box li::before {
+  content: "•";
+  position: absolute;
+  left: 0.25rem;
+  color: var(--nasa-cyan);
+}
+
+/* ==============================================================================
+   HEADER: NASA MISSION CONTROL RIBBON
+   ============================================================================== */
+.header {
+  background: rgba(7, 9, 14, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem 1.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+.header-container {
+  max-width: 1680px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.brand-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-insignia {
+  width: 44px;
+  height: 44px;
+  background: radial-gradient(circle, #0b1d3a 0%, #050b14 100%);
+  border: 1px solid rgba(0, 180, 216, 0.4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px rgba(0, 180, 216, 0.25);
+  color: var(--nasa-cyan);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.brand-insignia svg {
+  width: 24px;
+  height: 24px;
+}
+
+.brand-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+
+.nasa-tag {
+  background: var(--nasa-red);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-sm);
+  line-height: 1;
+}
+
+.telemetry-tag {
+  color: var(--nasa-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.675rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.brand-title h1 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.brand-title p {
+  font-size: 0.775rem;
+  color: var(--text-secondary);
+}
+
+/* Abas de Navegação Estilo NASA Portal */
+.nav-tabs {
+  display: flex;
+  gap: 0.35rem;
+  background: rgba(14, 20, 32, 0.85);
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-color);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.nav-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.825rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.nav-tab-btn svg {
+  width: 15px;
+  height: 15px;
+  opacity: 0.85;
+}
+
+.nav-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-tab-btn.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, #105bd8 0%, #0284c7 100%);
+  box-shadow: 0 2px 12px rgba(16, 91, 216, 0.4);
+}
+
+/* ==============================================================================
+   CONTEÚDO PRINCIPAL
+   ============================================================================== */
+.main-content {
+  flex: 1;
+  max-width: 1680px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.25rem 1.75rem 2rem;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* ==============================================================================
+   BARRA DE CONTROLES: TELEMETRIA E PARÂMETROS ORBITAIS
+   ============================================================================== */
+.control-ribbon {
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-hud);
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.control-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.select-muni {
+  background: rgba(7, 10, 19, 0.9);
+  color: #fff;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+  min-width: 270px;
+  transition: var(--transition);
+}
+
+.select-muni:focus {
+  outline: none;
+  border-color: var(--nasa-cyan);
+  box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.25);
+}
+
+/* Pílulas de Seleção de Escala SPEI */
+.scale-toggle-group {
+  display: flex;
+  background: rgba(7, 10, 19, 0.85);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-color);
+  padding: 3px;
+  gap: 2px;
+}
+
+.scale-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.775rem;
+  font-weight: 700;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.scale-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.scale-btn.active {
+  background: var(--nasa-cyan);
+  color: #07090e;
+  font-weight: 800;
+  box-shadow: 0 1px 8px rgba(0, 180, 216, 0.4);
+}
+
+/* Atalhos de Eventos Históricos */
+.event-shortcuts {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.shortcut-btn {
+  background: rgba(7, 10, 19, 0.8);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: inherit;
+}
+
+.shortcut-btn:hover {
+  color: #fff;
+  border-color: var(--border-light);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-dot.dot-red { background: var(--nasa-red); box-shadow: 0 0 6px rgba(227, 27, 35, 0.6); }
+.status-dot.dot-blue { background: var(--nasa-cyan); box-shadow: 0 0 6px rgba(0, 180, 216, 0.6); }
+.status-dot.dot-amber { background: var(--accent-gold); box-shadow: 0 0 6px rgba(250, 204, 21, 0.6); }
+.status-dot.dot-cyan { background: #38bdf8; box-shadow: 0 0 6px rgba(56, 189, 248, 0.6); }
+
+/* ==============================================================================
+   ÁREA DO MAPA & CLIMATE TIME MACHINE
+   ============================================================================== */
+.map-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-hud);
+  position: relative;
+}
+
+.map-header {
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(11, 15, 25, 0.95);
+}
+
+.map-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.map-title svg {
+  width: 18px;
+  height: 18px;
+  color: var(--nasa-cyan);
+}
+
+.date-badge {
+  background: linear-gradient(135deg, #105bd8 0%, #0284c7 100%);
+  color: #fff;
+  padding: 0.3rem 0.95rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 2px 10px rgba(16, 91, 216, 0.35);
+}
+
+#map {
+  width: 100%;
+  height: 540px;
+  background: #07090e;
+}
+
+/* ==============================================================================
+   HUD FLUTUANTE DE TELEMETRIA DO MAPA (ESTILO NASA EARTH COCKPIT)
+   ============================================================================== */
+.map-hud-overlay {
+  position: absolute;
+  top: 14px;
+  left: 60px;
+  background: rgba(7, 10, 18, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.15rem;
+  z-index: 600;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
+  min-width: 250px;
+}
+
+.hud-location-title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--nasa-cyan);
+  font-weight: 800;
+  margin-bottom: 0.2rem;
+}
+
+.hud-location-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 0.45rem;
+  line-height: 1.2;
+}
+
+.hud-metric-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.hud-spei-value {
+  font-size: 1.6rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  color: #fff;
+  line-height: 1;
+}
+
+.hud-spei-badge {
+  font-size: 0.675rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.hud-state-coverage {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.45rem;
+  font-size: 0.725rem;
+  color: var(--text-secondary);
+}
+
+.hud-state-coverage strong {
+  color: #fff;
+}
+
+.coverage-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  margin-top: 0.35rem;
+  overflow: hidden;
+}
+
+.coverage-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f4a582 0%, #b2182b 100%);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* ==============================================================================
+   LEGENDA HORIZONTAL CIENTÍFICA (NASA EARTH OBSERVATORY)
+   ============================================================================== */
+.map-legend-bar {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: rgba(7, 10, 18, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 0.95rem;
+  z-index: 600;
+  box-shadow: var(--shadow-hud);
+  max-width: 380px;
+  width: calc(100% - 32px);
+  font-size: 0.7rem;
+}
+
+.legend-bar-title {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+  margin-bottom: 0.35rem;
+}
+
+.legend-bar-gradient {
+  height: 10px;
+  border-radius: 3px;
+  background: linear-gradient(to right, 
+    #67001f 0%, 
+    #b2182b 16.6%, 
+    #d6604d 30%, 
+    #f4a582 42%, 
+    #f7f7f7 50%, 
+    #92c5de 62%, 
+    #4393c3 75%, 
+    #2166ac 88%, 
+    #053061 100%
+  );
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  margin-bottom: 0.3rem;
+}
+
+.legend-bar-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+}
+
+.legend-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.625rem;
+  font-weight: 700;
+  margin-top: 0.2rem;
+  color: var(--text-muted);
+}
+
+.label-drought { color: #f87171; }
+.label-normal { color: #f8fafc; }
+.label-wet { color: #38bdf8; }
+
+.legend-bar-hatch-note {
+  margin-top: 0.45rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  color: var(--accent-gold);
+}
+
+.hatch-sample-icon {
+  width: 16px;
+  height: 10px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    45deg,
+    #b2182b,
+    #b2182b 3px,
+    rgba(0, 0, 0, 0.5) 3px,
+    rgba(0, 0, 0, 0.5) 6px
+  );
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 4px rgba(250, 204, 21, 0.3);
+  flex-shrink: 0;
+}
+
+/* ==============================================================================
+   CLIMATE TIME MACHINE: BARRA DE CONTROLE TEMPORAL
+   ============================================================================== */
+.time-slider-container {
+  padding: 0.95rem 1.4rem;
+  background: rgba(9, 13, 22, 0.98);
+  border-top: 1px solid var(--border-color);
+}
+
+.slider-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+  flex-wrap: wrap;
+}
+
+.playback-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.playback-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.playback-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.playback-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--nasa-cyan);
+  color: var(--nasa-cyan);
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
+}
+
+.playback-btn.btn-play-nasa {
+  background: var(--nasa-red);
+  border-color: var(--nasa-red);
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  box-shadow: var(--shadow-glow-red);
+}
+
+.playback-btn.btn-play-nasa:hover {
+  background: var(--nasa-red-hover);
+  transform: scale(1.05);
+}
+
+.playback-btn.active {
+  background: var(--nasa-cyan);
+  border-color: var(--nasa-cyan);
+  color: #07090e;
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.speed-select {
+  background: rgba(7, 10, 19, 0.9);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.6rem;
+  font-size: 0.75rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.slider-track-wrapper {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.time-slider {
+  width: 100%;
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.12);
+  outline: none;
+  cursor: pointer;
+  accent-color: var(--nasa-cyan);
+  transition: var(--transition);
+}
+
+.time-slider:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.time-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  border: 3px solid var(--nasa-cyan);
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.7);
+  transition: transform 0.15s ease;
+}
+
+.time-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.time-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  border: 3px solid var(--nasa-cyan);
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.7);
+}
+
+.slider-labels-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.725rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+/* Atalhos de Décadas (Pílulas Rápidas) */
+.decade-shortcuts-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  flex-wrap: wrap;
+}
+
+.decade-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.decade-btn:hover {
+  color: #fff;
+  border-color: var(--nasa-cyan);
+  background: rgba(0, 180, 216, 0.08);
+}
+
+.decade-btn.active {
+  background: rgba(0, 180, 216, 0.2);
+  color: var(--nasa-cyan);
+  border-color: var(--nasa-cyan);
+}
+
+/* ==============================================================================
+   SEÇÃO DO GRÁFICO & TELEMETRIA ECHARTS
+   ============================================================================== */
+.analytics-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-hud);
+  margin-bottom: 1.25rem;
+}
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.analytics-title h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.analytics-title p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.kpi-card {
+  background: rgba(7, 10, 19, 0.85);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.95rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.kpi-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--border-light);
+}
+
+.kpi-card.severity-exceptional::before { background: var(--drought-exceptional); }
+.kpi-card.severity-extreme::before { background: var(--drought-extreme); }
+.kpi-card.severity-severe::before { background: var(--drought-severe); }
+.kpi-card.severity-moderate::before { background: var(--drought-moderate); }
+.kpi-card.severity-normal::before { background: var(--climate-normal); }
+.kpi-card.severity-wet::before { background: var(--wet-extreme); }
+
+.kpi-label {
+  font-size: 0.675rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.kpi-value {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #fff;
+  font-family: var(--font-mono);
+}
+
+.kpi-subtext {
+  font-size: 0.725rem;
+  color: var(--text-secondary);
+}
+
+#speiChart {
+  width: 100%;
+  height: 440px;
+}
+
+/* ==============================================================================
+   ABA DE METODOLOGIA EDITORIAL (NASA SCIENCE & KATEX)
+   ============================================================================== */
+.methodology-container {
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-hud);
+  max-width: 1150px;
+  margin: 0 auto;
+}
+
+.methodology-header {
+  margin-bottom: 2.25rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.methodology-header h2 {
+  font-size: 1.9rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.methodology-header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.methodology-section {
+  margin-bottom: 2.5rem;
+}
+
+.methodology-section h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--nasa-cyan);
+  margin-bottom: 0.95rem;
+  letter-spacing: -0.01em;
+}
+
+.methodology-section p {
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+  line-height: 1.75;
+  font-size: 0.95rem;
+}
+
+.methodology-section ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 1.25rem;
+}
+
+.methodology-section ul li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #cbd5e1;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.methodology-section ul li::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 0.6rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--nasa-cyan);
+}
+
+.latex-block {
+  background: rgba(7, 10, 19, 0.9);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin: 1.35rem 0;
+  text-align: center;
+  overflow-x: auto;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.methodology-callout {
+  background: rgba(14, 20, 32, 0.85);
+  border-left: 4px solid var(--accent-gold);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem 1.45rem;
+  margin: 1.35rem 0;
+}
+
+.methodology-callout.warning {
+  border-left-color: var(--nasa-red);
+  background: rgba(227, 27, 35, 0.08);
+}
+
+.methodology-callout h4 {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  margin-bottom: 0.45rem;
+}
+
+.methodology-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.35rem 0;
+  font-size: 0.875rem;
+}
+
+.methodology-table th, .methodology-table td {
+  padding: 0.75rem 0.95rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.methodology-table th {
+  background: rgba(7, 10, 19, 0.95);
+  color: #fff;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.methodology-table tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ref-list {
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+.ref-list li {
+  margin-bottom: 0.85rem;
+  padding-left: 0 !important;
+}
+
+.ref-list li::before {
+  display: none !important;
+}
+
+/* ==============================================================================
+   ABA DE SOBRE & EXPORTAÇÃO
+   ============================================================================== */
+.about-container {
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-hud);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.export-card {
+  background: rgba(7, 10, 19, 0.85);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.35rem;
+  margin: 1.35rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #105bd8 0%, #0284c7 100%);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition);
+  text-decoration: none;
+  box-shadow: 0 2px 10px rgba(16, 91, 216, 0.35);
+  font-family: inherit;
+}
+
+.btn-primary svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0d4bb8 0%, #0369a1 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(16, 91, 216, 0.5);
+}
+
+/* ==============================================================================
+   FOOTER: CRÉDITOS CIENTÍFICOS
+   ============================================================================== */
+.footer {
+  background: rgba(7, 9, 14, 0.95);
+  border-top: 1px solid var(--border-color);
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: auto;
+}
+
+.footer a {
+  color: var(--nasa-cyan);
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* ==============================================================================
+   RESPONSIVIDADE E ADAPTAÇÃO
+   ============================================================================== */
+@media (max-width: 1024px) {
+  #map { height: 460px; }
+  #speiChart { height: 380px; }
+  .control-ribbon { flex-direction: column; align-items: stretch; }
+  .select-muni { width: 100%; }
+}
+
+@media (max-width: 640px) {
+  .header-container { flex-direction: column; align-items: flex-start; }
+  .nav-tabs { width: 100%; justify-content: space-around; }
+  #map { height: 380px; }
+  .map-hud-overlay { left: 10px; top: 10px; font-size: 0.8rem; }
+  .map-legend-bar { display: none; }
+  .slider-controls-row { flex-direction: column; align-items: stretch; }
+}

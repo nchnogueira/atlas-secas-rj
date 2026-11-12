@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Atlas Histórico de Secas e Risco Hídrico do Estado do Rio de Janeiro (1981–2026)</title>
+  <meta name="description" content="Atlas histórico de risco hídrico e monitoramento multiescalar de secas do Estado do Rio de Janeiro com dados CHIRPS v3, ERA5-Land, SPEI-3/6/12/24 e projeção preditiva ARIMA.">
+  <meta name="author" content="Nícolas Chenquel Nogueira">
+
+  <!-- Estilos Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+
+  <!-- Biblioteca KaTeX para Renderização de LaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Estilos Customizados da Aplicação (NASA Science Climate Interactives Theme) -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- HEADER: NASA MISSION CONTROL RIBBON -->
+  <header class="header">
+    <div class="header-container">
+      <div class="brand-wrapper">
+        <div class="brand-insignia" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M2 12h20"></path>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+        </div>
+        <div class="brand-title">
+          <div class="brand-badge-row">
+            <span class="nasa-tag">Earth Observation</span>
+            <span class="telemetry-tag">CHIRPS v3 &middot; 0,05&deg; (~5 km) &middot; 1981&ndash;2026 &middot; Projeção ARIMA 12 Meses (2026/2027)</span>
+          </div>
+          <h1>Atlas Histórico de Secas e Risco Hídrico do Estado do Rio de Janeiro</h1>
+          <p>Monitoramento Multiescalar de Secas &middot; Balanço Hídrico &middot; Bacia do Paraíba do Sul e Litoral Fluminense</p>
+        </div>
+      </div>
+
+      <nav class="nav-tabs" aria-label="Navegação de Módulos">
+        <button class="nav-tab-btn active" data-tab="tab-atlas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+            <line x1="8" y1="2" x2="8" y2="18"></line>
+            <line x1="16" y1="6" x2="16" y2="22"></line>
+          </svg>
+          Explorador Orbital
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-methodology">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          Metodologia &amp; Vulnerabilidades
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-about">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          Sobre &amp; Dados
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="main-content">
+
+    <!-- =========================================================================
+         ABA 1: EXPLORADOR ORBITAL (MAPA, TIME MACHINE & GRÁFICO)
+         ========================================================================= -->
+    <div id="tab-atlas" class="tab-pane active">
+
+      <!-- =====================================================================
+           CARD DE INTRODUÇÃO, PROPOSTA DO ATLAS & GUIA DE INTERPRETAÇÃO DO SPEI
+           ===================================================================== -->
+      <section class="intro-card" aria-label="Introdução e Guia de Interpretação do Atlas">
+        <div class="intro-header">
+          <div class="intro-title-group">
+            <span class="intro-badge">Guia de Monitoramento</span>
+            <h2>Atlas Histórico de Secas e Risco Hídrico Fluminense</h2>
+          </div>
+          <button id="btnToggleIntro" class="intro-toggle-btn" aria-expanded="true" aria-controls="introContent" title="Recolher ou Expandir Introdução">
+            <span id="introToggleText">Recolher Guia</span>
+            <svg id="introToggleIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <div id="introContent" class="intro-content">
+          <p class="intro-overview-text">
+            O <strong>Atlas de Secas do Rio de Janeiro</strong> é uma plataforma de inteligência territorial e climatologia analítica desenvolvida para monitorar a evolução espaço-temporal do estresse hídrico nos <strong>92 municípios fluminenses</strong> ao longo de <strong>46 anos (1981–2026)</strong>, complementada por uma <strong>projeção preditiva estocástica via ARIMA de 12 meses (2026/2027)</strong>. Utilizando sensoriamento remoto orbital em grade contínua de <strong>0,05° (~5,5 km, totalizando 1.746 células)</strong>, a ferramenta integra dados de precipitação por satélite corrigidos por estações (<strong>CHIRPS v3</strong>) e evapotranspiração de referência baseada em reanálise atmosférica (<strong>ERA5-Land</strong>).
+          </p>
+
+          <div class="intro-grid">
+            <!-- Bloco 1: O que é o SPEI -->
+            <div class="intro-box">
+              <div class="intro-box-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                </svg>
+                O que o SPEI Informa
+              </div>
+              <p>
+                Diferente de índices pluviométricos simplistas (como o SPI), o <strong>SPEI (Standardized Precipitation-Evapotranspiration Index)</strong> calcula o balanço hídrico climatológico real:
+              </p>
+              <div style="text-align: center; margin: 0.75rem 0; font-size: 1.15rem; color: var(--nasa-cyan);">
+                $$D_i = P_i - \text{PET}_i$$
+              </div>
+              <p>
+                Ao computar a demanda atmosférica de vapor d'água impulsionada por temperatura, radiação e vento, o SPEI captura o <strong>estresse por calor e a evapotranspiração acelerada</strong> das mudanças climáticas, identificando secas repentinas e perdas hídricas profundas.
+              </p>
+            </div>
+
+            <!-- Bloco 2: As 4 Escalas Temporais -->
+            <div class="intro-box">
+              <div class="intro-box-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                As 4 Escalas Temporais
+              </div>
+              <ul>
+                <li><strong>SPEI-3 (Agrícola):</strong> Acúmulo de 3 meses. Reflete umidade na camada superficial do solo, estresse vegetal e quebras de safra de curto ciclo.</li>
+                <li><strong>SPEI-6 (Sazonal):</strong> 6 meses. Integra ciclos climáticos sazonais (verão/inverno), vazões de médios rios e reservatórios agrícolas.</li>
+                <li><strong>SPEI-12 (Hidrológica):</strong> 12 meses. Captura o balanço anual, níveis de grandes reservatórios e o regime das bacias do Paraíba do Sul e Guandu.</li>
+                <li><strong>SPEI-24 (Aquíferos):</strong> 24 meses. Monitora secas severas plurianuais persistentes, esgotamento do lençol freático e recarga de aquíferos subterrâneos.</li>
+              </ul>
+            </div>
+
+            <!-- Bloco 3: Leitura Cartográfica e Texturas -->
+            <div class="intro-box">
+              <div class="intro-box-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                  <polyline points="2 17 12 22 22 17"></polyline>
+                  <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+                Como Interpretar o Mapa
+              </div>
+              <ul>
+                <li><strong>Cores Vermelhas / Marrom (SPEI &le; -1,0):</strong> Déficit hídrico (Seca Moderada a Excepcional). Quanto mais escuro o tom carmesim, maior a severidade da estiagem.</li>
+                <li><strong>Tons Claros / Branco (-0,5 a +0,5):</strong> Condições próximas à média climatológica histórica de 1981–2026.</li>
+                <li><strong>Cores Azuis (SPEI &ge; +1,0):</strong> Superávit hídrico e anomalias de umidade positiva (moderadamente a excepcionalmente úmido).</li>
+                <li><strong>Preenchimento Sólido vs. Hachurado:</strong> Os dados de 1981 a 2026 (até setembro) são medições observadas reais (células sólidas). O horizonte posterior apresenta <strong>listras diagonais texturizadas</strong> indicando projeções probabilísticas do modelo estocástico ARIMA.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BARRA DE CONTROLES DO ATLAS -->
+      <section class="control-ribbon" aria-label="Controles do Atlas">
+        <div class="control-group">
+          <label class="control-label" for="selectMuni">Território:</label>
+          <select id="selectMuni" class="select-muni">
+            <option value="ALL">Todos os 92 Municípios (Visão Estadual)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Escala Temporal:</label>
+          <div class="scale-toggle-group" role="group" aria-label="Escalas do SPEI">
+            <button class="scale-btn" data-scale="3" title="Seca Agrícola de Curto Prazo (3 meses)">SPEI-3</button>
+            <button class="scale-btn" data-scale="6" title="Seca Sazonal Agrícola-Hidrológica (6 meses)">SPEI-6</button>
+            <button class="scale-btn active" data-scale="12" title="Seca Hidrológica Plurianual (12 meses)">SPEI-12</button>
+            <button class="scale-btn" data-scale="24" title="Seca Hidrológica Profunda e Aquíferos (24 meses)">SPEI-24</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Eventos Históricos:</label>
+          <div class="event-shortcuts">
+            <button class="shortcut-btn" data-event="megadrought2014" title="Pico da Megasseca do Sudeste Brasileiro">
+              <span class="status-dot dot-red" aria-hidden="true"></span>
+              Megasseca (2014&ndash;2015)
+            </button>
+            <button class="shortcut-btn" data-event="flood2011" title="Cheias Históricas do Sudeste">
+              <span class="status-dot dot-blue" aria-hidden="true"></span>
+              Cheias (2011)
+            </button>
+            <button class="shortcut-btn" data-event="crisis2001" title="Estiagem Crítica e Crise Hídrica/Energética">
+              <span class="status-dot dot-amber" aria-hidden="true"></span>
+              Estiagem (2001)
+            </button>
+            <button class="shortcut-btn" data-event="latest" title="Registro mais recente da série histórica">
+              <span class="status-dot dot-cyan" aria-hidden="true"></span>
+              Último Mês
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ÁREA DO MAPA & CLIMATE TIME MACHINE -->
+      <section class="map-card">
+        <div class="map-header">
+          <div class="map-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            Malha de Observação 0,05&deg; (~5,5 km) &mdash; 1.746 Células Orbitais no Estado do Rio de Janeiro
+          </div>
+          <div id="currentDateBadge" class="date-badge">
+            Setembro de 2026
+          </div>
+        </div>
+
+        <div style="position: relative;">
+          <!-- Mapa Leaflet -->
+          <div id="map"></div>
+
+          <!-- HUD Flutuante de Telemetria do Ponto / Município Selecionado -->
+          <div id="mapHud" class="map-hud-overlay">
+            <div id="hudLocationTitle" class="hud-location-title">Território Selecionado</div>
+            <div id="hudLocationName" class="hud-location-name">Todos os 92 Municípios</div>
+            <div class="hud-metric-row">
+              <div id="hudSpeiVal" class="hud-spei-value">--</div>
+              <div id="hudSpeiBadge" class="hud-spei-badge">Normalidade</div>
+            </div>
+            <div class="hud-state-coverage">
+              <div id="hudCoverageText">Território em Seca (SPEI &lt; -1,0): <strong>--</strong></div>
+              <div class="coverage-bar">
+                <div id="hudCoverageFill" class="coverage-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Legenda Científica Horizontal (Estilo NASA Earth Observatory) -->
+          <div class="map-legend-bar">
+            <div class="legend-bar-title">
+              <span>Índice Padronizado SPEI</span>
+              <span>Resolução 0,05&deg;</span>
+            </div>
+            <div class="legend-bar-gradient"></div>
+            <div class="legend-bar-ticks">
+              <span>&le; -2,0</span>
+              <span>-1,5</span>
+              <span>-1,0</span>
+              <span>0,0</span>
+              <span>+1,0</span>
+              <span>+1,5</span>
+              <span>&ge; +2,0</span>
+            </div>
+            <div class="legend-bar-labels">
+              <span class="label-drought">&larr; Seca Crítica</span>
+              <span class="label-normal">Normalidade</span>
+              <span class="label-wet">Cheia / Úmido &rarr;</span>
+            </div>
+            <div class="legend-bar-hatch-note">
+              <span class="hatch-sample-icon" aria-hidden="true"></span>
+              <span><strong>Textura Hachurada:</strong> Projeção Preditiva (ARIMA 12 Meses)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CLIMATE TIME MACHINE: BARRA DE CONTROLE TEMPORAL INTEGRADA -->
+        <div class="time-slider-container">
+          <div class="slider-controls-row">
+            <div class="playback-btn-group">
+              <button id="btnPrev" class="playback-btn" title="Mês Anterior (Atalho: Seta Esquerda)" aria-label="Mês Anterior">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                  <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line>
+                </svg>
+              </button>
+              <button id="btnPlay" class="playback-btn btn-play-nasa" title="Iniciar/Pausar Reprodução Temporal" aria-label="Reproduzir Animação">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+              </button>
+              <button id="btnNext" class="playback-btn" title="Próximo Mês (Atalho: Seta Direita)" aria-label="Próximo Mês">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                  <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line>
+                </svg>
+              </button>
+            </div>
+
+            <select id="selectSpeed" class="speed-select" title="Velocidade de Reprodução" aria-label="Velocidade de Reprodução">
+              <option value="0.5">0.5x</option>
+              <option value="1" selected>1.0x</option>
+              <option value="2">2.0x</option>
+              <option value="4">4.0x</option>
+            </select>
+
+            <div class="slider-track-wrapper">
+              <input type="range" id="timeSlider" class="time-slider" min="0" max="560" value="548" step="1" aria-label="Linha do Tempo Mensal (1981 a 2027)">
+              <div class="slider-labels-row">
+                <span>1981</span>
+                <span>1990</span>
+                <span>2000</span>
+                <span>2010</span>
+                <span>2020</span>
+                <span>2026</span>
+                <span style="color: var(--accent-gold); font-weight: 700;">Previsão 2026/27</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Atalhos Rápidos de Décadas e Previsão 12 Meses -->
+          <div class="decade-shortcuts-row">
+            <span style="font-size: 0.675rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-right: 0.25rem;">Navegação Rápida:</span>
+            <button class="decade-btn" data-year="1981">1981</button>
+            <button class="decade-btn" data-year="1990">1990</button>
+            <button class="decade-btn" data-year="2000">2000</button>
+            <button class="decade-btn" data-year="2010">2010</button>
+            <button class="decade-btn" data-year="2020">2020</button>
+            <button class="decade-btn" data-year="2024">2024</button>
+            <button class="decade-btn active" data-year="latest">Set/2026</button>
+            <button class="decade-btn" data-year="2026-fc" style="border-color: var(--accent-gold); color: var(--accent-gold);">Prev. 2026/27</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO ANALÍTICA: KPIS & GRÁFICO DA SÉRIE COMPLETA COM FORECAST -->
+      <section class="analytics-card">
+        <div class="analytics-header">
+          <div class="analytics-title">
+            <h3 id="chartHeaderTitle">Diagnóstico Climatológico e Projeção Temporal</h3>
+            <p id="chartHeaderSubtitle">Selecione uma célula na grade ou um município no menu para inspecionar os registros</p>
+          </div>
+          <button id="btnExportCSV" class="btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Exportar Série (CSV)
+          </button>
+        </div>
+
+        <!-- Cards de Indicadores-Chave (KPIs) -->
+        <div class="kpi-grid">
+          <div id="kpiCurrentCard" class="kpi-card severity-normal">
+            <span class="kpi-label">Classificação no Mês</span>
+            <span id="kpiCurrentVal" class="kpi-value">--</span>
+            <span id="kpiCurrentSub" class="kpi-subtext">Data de referência selecionada</span>
+          </div>
+
+          <div class="kpi-card severity-extreme">
+            <span class="kpi-label">Pior Seca Registrada</span>
+            <span id="kpiWorstDrought" class="kpi-value">--</span>
+            <span id="kpiWorstDroughtSub" class="kpi-subtext">Mínimo da série histórica</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Projeção 12 Meses (ARIMA)</span>
+            <span id="kpiForecast" class="kpi-value">--</span>
+            <span id="kpiForecastSub" class="kpi-subtext">Horizonte h = 12 (2026)</span>
+          </div>
+        </div>
+
+        <!-- Contêiner do Gráfico ECharts -->
+        <div id="speiChart"></div>
+      </section>
+
+    </div>
+
+    <!-- =========================================================================
+         ABA 2: METODOLOGIA & VULNERABILIDADES (COM LATEX / KATEX)
+         ========================================================================= -->
+    <div id="tab-methodology" class="tab-pane">
+      <article class="methodology-container">
+        <header class="methodology-header">
+          <h2>Fundamentação Metodológica e Avaliação de Incertezas</h2>
+          <p>Protocolo de harmonização espacial, balanço hídrico, padronização estatística multiescalar e modelagem autorregressiva de séries temporais.</p>
+        </header>
+
+        <!-- SEÇÃO 1: DADOS -->
+        <section class="methodology-section">
+          <h3>1. Fontes de Dados e Harmonização Espacial</h3>
+          <p>
+            O monitoramento contínuo da dinâmica de secas em meso e microescalas requer matrizes espaciais com alta resolução e cobertura temporal extensa (mínimo de 30 anos para a caracterização de normais climatológicas segundo a Organização Meteorológica Mundial). O pipeline integra duas bases consolidadas na literatura internacional:
+          </p>
+          <ul>
+            <li>
+              <strong>CHIRPS v3 (Climate Hazards Group InfraRed Precipitation with Station data v3.0, RNL):</strong> 
+              Desenvolvido pelo <em>Climate Hazards Center</em> da Universidade da Califórnia em Santa Bárbara (UCSB) e USGS (Funk et al., 2015). A base foi extraída diretamente da coleção <code>UCSB-CHC/CHIRPS/V3/DAILY_RNL</code> no Google Earth Engine com resolução espacial nativa de $0{,}05^\circ$ ($\approx 5{,}5\text{ km}$). O produto combina observações térmicas infravermelhas de satélites geoestacionários (Cold Cloud Duration), dados de reanálise atmosférica e assimilação de estações pluviométricas de superfície. A série cobre ininterruptamente de janeiro de 1981 a setembro de 2026, totalizando 549 meses observados para cada uma das 1.746 células sobre o território fluminense, com horizonte posterior projetado via ARIMA (2026/2027).
+            </li>
+            <li>
+              <strong>ERA5-Land (ECMWF Copernicus Climate Change Service):</strong> 
+              Reanálise atmosférica global horária e mensal com resolução de $0{,}1^\circ$ ($\approx 9\text{ km}$) descrita por Muñoz-Sabater et al. (2021). As variáveis de temperatura média do ar a 2 metros ($T_m$) foram harmonizadas espacialmente via vizinho mais próximo e interpolação para os centroides das 1.746 células do CHIRPS v3.
+            </li>
+          </ul>
+        </section>
+
+        <!-- SEÇÃO 2: BALANÇO HÍDRICO -->
+        <section class="methodology-section">
+          <h3>2. Balanço Hídrico Climatológico e Evapotranspiração Potencial</h3>
+          <p>
+            Diferentemente do Índice Padronizado de Precipitação (SPI), formulado originalmente por McKee et al. (1993) para quantificar exclusivamente anomalias de chuva, o Índice Padronizado de Precipitação-Evapotranspiração (SPEI), proposto por Vicente-Serrano et al. (2010), incorpora a demanda evaporativa da atmosfera. O balanço hídrico mensal para o mês $i$ é calculado pela diferença:
+          </p>
+          <div class="latex-block">
+            $$D_i = P_i - \text{PET}_i \quad [\text{mm/mês}]$$
+          </div>
+          <p>
+            onde $P_i$ representa a precipitação mensal acumulada obtida do CHIRPS v3 e $\text{PET}_i$ é a Evapotranspiração Potencial estimada pelo método de Thornthwaite (1948) adaptado por Vicente-Serrano et al. (2010):
+          </p>
+          <div class="latex-block">
+            $$\text{PET}_m = 16 \left( \frac{10 \, T_m}{I} \right)^a \left( \frac{N}{12} \right) \left( \frac{d_m}{30} \right)$$
+          </div>
+          <p>
+            Na formulação acima, $T_m$ é a temperatura média do mês em &deg;C; $d_m$ é a quantidade de dias no mês; $N$ é o fotoperíodo astronômico médio diário (função trigonométrica direta da latitude $\phi$ da célula e da declinação solar); $I$ é o índice de calor térmico anual:
+          </p>
+          <div class="latex-block">
+            $$I = \sum_{m=1}^{12} \left( \frac{T_m}{5} \right)^{1{,}514}$$
+          </div>
+          <p>
+            e o expoente cúbico $a$ é calculado empiricamente em função de $I$:
+          </p>
+          <div class="latex-block">
+            $$a = 6{,}75 \times 10^{-7} I^3 - 7{,}71 \times 10^{-5} I^2 + 1{,}792 \times 10^{-2} I + 0{,}49239$$
+          </div>
+        </section>
+
+        <!-- SEÇÃO 3: CÁLCULO E DISTRIBUIÇÃO LOG-LOGÍSTICA -->
+        <section class="methodology-section">
+          <h3>3. Acumulação Multiescalar e Ajuste da Distribuição Log-Logística</h3>
+          <p>
+            Para uma escala temporal de acumulação de $k$ meses ($k \in \{3, 6, 12, 24\}$), a série móvel do balanço hídrico acumulado no ano $i$ e mês $j$ é dada por:
+          </p>
+          <div class="latex-block">
+            $$X_{i,j}^k = \sum_{l=0}^{k-1} D_{i-l, j}$$
+          </div>
+          <p>
+            Como os valores de déficit hídrico acumulado $X^k$ admitem magnitudes negativas (quando a evapotranspiração potencial supera a precipitação incidente), as funções de densidade de probabilidade Gamma de dois parâmetros (aplicadas ao SPI) tornam-se inadequadas. Vicente-Serrano et al. (2010) demonstraram que a <strong>Distribuição Log-Logística de Três Parâmetros</strong> modela os extremos de balanço hídrico com máxima aderência aos L-momentos amostrais. Sua função de distribuição acumulada é expressa por:
+          </p>
+          <div class="latex-block">
+            $$F(x) = \left[ 1 + \left( \frac{\alpha}{x - \gamma} \right)^\beta \right]^{-1}$$
+          </div>
+          <p>
+            onde $\alpha$ é o parâmetro de escala, $\beta$ é o parâmetro de forma e $\gamma$ é o parâmetro de locação, calculados via momentos ponderados por probabilidade ($w_0, w_1, w_2$). A probabilidade acumulada $P = F(x)$ é então convertida na variável normal padronizada $\text{SPEI} \sim \mathcal{N}(0, 1)$ por meio da aproximação racional de Abramowitz e Stegun (1965):
+          </p>
+          <div class="latex-block">
+            $$\text{SPEI} = W - \frac{C_0 + C_1 W + C_2 W^2}{1 + d_1 W + d_2 W^2 + d_3 W^3}$$
+          </div>
+          <p>
+            onde $W = \sqrt{-2 \ln(P)}$ para $P \le 0{,}5$, com as constantes $C_0 = 2{,}515517$, $C_1 = 0{,}802853$, $C_2 = 0{,}010328$, $d_1 = 1{,}432788$, $d_2 = 0{,}189269$ e $d_3 = 0{,}001308$.
+          </p>
+
+          <table class="methodology-table">
+            <thead>
+              <tr>
+                <th>Escala</th>
+                <th>Janela Temporal</th>
+                <th>Significado Biofísico e Aplicação Operacional</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>SPEI-3</strong></td>
+                <td>3 meses</td>
+                <td><strong>Seca Agrícola de Curto Prazo:</strong> Monitora o teor de umidade na zona radicular do solo, estresse fisiológico de pastagens e produtividade de culturas de ciclo curto (olericultura e grãos).</td>
+              </tr>
+              <tr>
+                <td><strong>SPEI-6</strong></td>
+                <td>6 meses</td>
+                <td><strong>Seca Sazonal Agrícola-Hidrológica:</strong> Identifica déficits hídricos intersazonais completos (estação chuvosa versus seca) e os primeiros impactos no armazenamento de reservatórios menores.</td>
+              </tr>
+              <tr>
+                <td><strong>SPEI-12</strong></td>
+                <td>12 meses</td>
+                <td><strong>Seca Hidrológica Plurianual:</strong> Quantifica anomalias anuais persistentes que reduzem a vazão das grandes bacias (exemplo: Bacia do Rio Paraíba do Sul) e o volume útil de represas hidrelétricas.</td>
+              </tr>
+              <tr>
+                <td><strong>SPEI-24</strong></td>
+                <td>24 meses</td>
+                <td><strong>Seca Hidrológica Profunda:</strong> Mede o esgotamento hídrico crônico, a taxa de recarga de aquíferos subterrâneos profundos e orienta a governança de segurança hídrica estadual.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- SEÇÃO 4: MODELAGEM ARIMA -->
+        <section class="methodology-section">
+          <h3>4. Modelagem Preditiva Temporal: ARIMA (h = 12 Meses) e Intervalos de Incerteza</h3>
+          <p>
+            Para projetar o comportamento do índice nos 12 meses subsequentes ao encerramento da série observada ($h = 12$: cobrindo de janeiro de 2026 a dezembro de 2026), ajustamos a classe geral de modelos autorregressivos integrados de médias móveis $\text{ARIMA}(p, d, q)$ de Box e Jenkins (1970):
+          </p>
+          <div class="latex-block">
+            $$\left( 1 - \sum_{i=1}^p \phi_i B^i \right) (1 - B)^d Y_t = c + \left( 1 + \sum_{j=1}^q \theta_j B^j \right) \varepsilon_t$$
+          </div>
+          <p>
+            onde $B$ é o operador de defasagem ($B^k Y_t = Y_{t-k}$), $\phi_i$ são os coeficientes autorregressivos, $\theta_j$ são os coeficientes de médias móveis e $\varepsilon_t \sim \text{i.i.d. } \mathcal{N}(0, \sigma^2)$ é o ruído branco. A seleção dos hiperparâmetros $(p, d, q)$ foi automatizada célula a célula pela minimização do Critério de Informação de Akaike Corrigido (AICc). Como o SPEI já é padronizado mensalmente por construção, sua sazonalidade média é nula, permitindo modelar a persistência autorregressiva direta.
+          </p>
+          <p>
+            No mapa espacial, para distinguir rigorosamente os dados simulados dos observados historicamente via satélite, os pixels correspondentes ao período projetado são renderizados com <strong>textura hachurada diagonal</strong> em 45 graus sobre a cor correspondente à categoria prevista do SPEI.
+          </p>
+          <p>
+            Os limites analíticos dos intervalos de predição para o horizonte $h$ foram calculados com base na variância acumulada do erro de projeção $\sigma_h^2$:
+          </p>
+          <div class="latex-block">
+            $$\hat{Y}_{t+h} \pm z_{\alpha/2} \cdot \sigma_h$$
+          </div>
+          <p>
+            onde $z_{0{,}10} \approx 1{,}28$ para o intervalo de confiança de 80% e $z_{0{,}025} \approx 1{,}96$ para o intervalo de 95%.
+          </p>
+        </section>
+
+        <!-- SEÇÃO 5: VULNERABILIDADES DE REANÁLISE E SATÉLITE -->
+        <section class="methodology-section">
+          <h3>5. Vulnerabilidades Conhecidas e Limitações Físicas dos Produtos</h3>
+          <div class="methodology-callout warning">
+            <h4>Advertência sobre Incertezas de Produtos Remotos e Modelados</h4>
+            <p>
+              O uso de matrizes de satélite e reanálise meteorológica para subsidiar planejamento hídrico exige a compreensão de vieses e limitações inerentes à física dos sensores e à resolução das grades:
+            </p>
+          </div>
+          <ul>
+            <li>
+              <strong>Atenuação Orográfica em Relevo Acidentado:</strong> A Serra do Mar e a Serra dos Órgãos apresentam rampas altimétricas abruptas, elevando-se do nível do mar a mais de 2.000 metros em menos de 30 quilômetros. Embora a resolução de 5,5 km do CHIRPS v3 seja refinada para produtos continentais, ela tende a suavizar os picos pluviométricos na encosta a barlavento e pode mascarar a sombra de chuva no sopé a sotavento.
+            </li>
+            <li>
+              <strong>Densidade Heterogênea da Rede Pluviométrica de Superfície:</strong> O algoritmo do CHIRPS combina estimativa térmica de nuvens frias com pluviômetros de superfície (station blending). Em microrregiões ou períodos históricos com menor densidade de postos convencionais ou automáticos ativos (INMET/ANA), a estimativa passa a depender majoritariamente da radiação infravermelha, elevando a variância dos acumulados.
+            </li>
+            <li>
+              <strong>Representação de Convecção Tropical Isolada versus Sistemas Frontais:</strong> CHIRPS e ERA5-Land capturam com elevada precisão sistemas frontais organizados e a Zona de Convergência do Atlântico Sul (ZCAS). Por outro lado, tempestades convectivas tropicais severas de mesoescala (típicas de tardes de verão), caracterizadas por diâmetros inferiores a 10 km e curta duração, sofrem atenuação em relação a pluviômetros pontuais de superfície.
+            </li>
+            <li>
+              <strong>Efeito de Contaminação da Linha de Costa (Land-Sea Boundary):</strong> Células litorâneas (Baía de Guanabara, Ilha Grande e Região dos Lagos) compartilham frações oceânicas na grade da reanálise ERA5-Land. Isso atenua suavemente as amplitudes térmicas extremas diurnas em relação a estações meteorológicas terrestres protegidas.
+            </li>
+            <li>
+              <strong>Suposição de Não-Estacionariedade Climática:</strong> O cálculo formal do SPEI assume que a série de referência reflete uma distribuição estacionária. No contexto de aquecimento antropogênico contínuo no Rio de Janeiro, o aumento constante das temperaturas eleva a taxa de $PET$, induzindo tendências graduais de aridização que devem ser analisadas à luz de tendências climáticas estruturais.
+            </li>
+          </ul>
+        </section>
+
+        <!-- SEÇÃO 6: REFERÊNCIAS BIBLIOGRÁFICAS -->
+        <section class="methodology-section">
+          <h3>6. Referências Bibliográficas Fundamentais</h3>
+          <ul class="ref-list">
+            <li>Abramowitz, M., &amp; Stegun, I. A. (1965). <em>Handbook of mathematical functions with formulas, graphs, and mathematical tables</em>. Dover Publications, New York.</li>
+            <li>Box, G. E., &amp; Jenkins, G. M. (1970). <em>Time series analysis: forecasting and control</em>. Holden-Day, San Francisco.</li>
+            <li>Funk, C., Peterson, P., Landsfeld, M., Pedreros, D., Verdin, J., Shukla, S., Husak, G., Rowland, J., Harrison, L., Hoell, A., &amp; Michaelsen, J. (2015). The climate hazards infrared precipitation with stations—a new environmental record for monitoring extremes. <em>Scientific Data</em>, 2(1), 150066.</li>
+            <li>McKee, T. B., Doesken, N. J., &amp; Kleist, J. (1993). The relationship of drought frequency and duration to time scales. In <em>Proceedings of the 8th Conference on Applied Climatology</em>, Anaheim, California (Vol. 17, No. 22, pp. 179-183).</li>
+            <li>Muñoz-Sabater, J., Dutra, E., Agustí-Panareda, A., Albergel, C., Arduini, G., Balsamo, G., Boussetta, S., Choulga, M., Harrigan, S., Hersbach, H., Martens, B., Miralles, D. G., Piles, M., Rodríguez-Fernández, N. J., Zsoter, E., Buontempo, C., &amp; Thépaut, J.-N. (2021). ERA5-Land: a state-of-the-art global reanalysis dataset for land applications. <em>Earth System Science Data</em>, 13(9), 4349-4383.</li>
+            <li>Thornthwaite, C. W. (1948). An approach toward a rational classification of climate. <em>Geographical Review</em>, 38(1), 55-94.</li>
+            <li>Vicente-Serrano, S. M., Beguería, S., &amp; López-Moreno, J. I. (2010). A multiscalar drought index sensitive to global warming: the Standardized Precipitation Evapotranspiration Index. <em>Journal of Climate</em>, 23(7), 1696-1718.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+
+    <!-- =========================================================================
+         ABA 3: SOBRE & DADOS
+         ========================================================================= -->
+    <div id="tab-about" class="tab-pane">
+      <article class="about-container">
+        <header class="methodology-header">
+          <h2>Sobre o Projeto e Dados Abertos</h2>
+          <p>Ciência de dados aplicada à climatologia quantitativa, segurança hídrica e resiliência territorial.</p>
+        </header>
+
+        <section class="methodology-section">
+          <h3>Autoria e Contexto Institucional</h3>
+          <p>
+            Desenvolvido por <strong>Nícolas Chenquel Nogueira</strong>, Mestrando em Ciências Naturais na Universidade Estadual do Norte Fluminense Darcy Ribeiro (UENF) e Licenciado em Ciências Biológicas pela UFRJ. Pesquisador atuante na interface entre Climatologia Quantitativa, Geoprocessamento, Bioestatística, Modelagem de Séries Temporais e Avaliação de Riscos Climáticos (ESG/TCFD).
+          </p>
+        </section>
+
+        <section class="methodology-section">
+          <h3>Reprodutibilidade e Código Aberto</h3>
+          <p>
+            O fluxo analítico completo &mdash; incluindo ingestão relacional em DuckDB, harmonização de grades espaciais, cálculo do balanço hídrico, estimação dos parâmetros L-momentos, análise de dinâmica espaço-temporal e modelagem preditiva estocástica ARIMA &mdash; está aberto para fins acadêmicos e auditoria no repositório do autor:
+          </p>
+          <div class="export-card">
+            <div>
+              <h4 style="color: #fff; margin-bottom: 0.25rem;">Repositório Oficial no GitHub</h4>
+              <p style="color: #94a3b8; font-size: 0.825rem; margin-bottom: 0;">Scripts em linguagem R, rotinas SQL em DuckDB, camadas GeoJSON e interface estática.</p>
+            </div>
+            <a href="https://github.com/nchnogueira" target="_blank" rel="noopener noreferrer" class="btn-primary">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"></path>
+              </svg>
+              Acessar Repositório
+            </a>
+          </div>
+        </section>
+      </article>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>
+      Atlas Histórico de Secas e Risco Hídrico do Estado do Rio de Janeiro &copy; 2026 &middot; Nícolas Chenquel Nogueira &middot; UENF / CAPES &middot; Dados: CHIRPS v3 (UCSB/GEE) e ERA5-Land (ECMWF)
+    </p>
+  </footer>
+
+  <!-- Bibliotecas Externas: Leaflet e Apache ECharts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+  <!-- Módulos da Aplicação -->
+  <script src="js/map.js"></script>
+  <script src="js/chart.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
